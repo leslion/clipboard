@@ -1,0 +1,167 @@
+package com.leslio.draftproject;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class PhraseUtilsTest {
+
+
+    @ParameterizedTest(name = "[{index}] ==> expected {0} word(s). Phrase is \"{1}\"")
+    @MethodSource("com.leslio.draftproject.ValuesProvider#providePhrasesForCountWords")
+    void countWords(int expected, String phrase) {
+        int actual = PhraseUtils.countWords(phrase);
+
+        assertEquals(expected, actual, "This method should count words.");
+    }
+
+    @Test
+    void countWordsNull() {
+        int expected = 0;
+        int actual = PhraseUtils.countWords(null);
+
+        assertEquals(expected, actual, "This method should count words.");
+    }
+
+    @ParameterizedTest(name = "[{index}] ==> expected {0} character(s). Phrase is \"{1}\"")
+    @MethodSource("com.leslio.draftproject.ValuesProvider#providePhrasesForCountChars")
+    void countChars(int expected, String phrase) {
+        int actual = PhraseUtils.countChars(phrase);
+
+        assertEquals(expected, actual, "This method should count non-blank characters.");
+    }
+
+    @Test
+    void countCharsNull() {
+        int expected = 0;
+        int actual = PhraseUtils.countChars(null);
+
+        assertEquals(expected, actual, "This method should count non-blank characters.");
+    }
+
+    @ParameterizedTest(name = "[{index}] ==> expected {0} vowel(s). Phrase is \"{1}\"")
+    @MethodSource("com.leslio.draftproject.ValuesProvider#providePhrasesForCountVowels")
+    void countVowels(int expected, String phrase) {
+        int actual = PhraseUtils.countVowels(phrase);
+
+        assertEquals(expected, actual, "This method should count vowels.");
+    }
+
+    @Test
+    void countVowelsNull() {
+        int expected = 0;
+        int actual = PhraseUtils.countVowels(null);
+
+        assertEquals(expected, actual, "This method should count vowels.");
+    }
+
+    @ParameterizedTest(name = "[{index}] ==> expected {0} consonant(s). Phrase is \"{1}\"")
+    @MethodSource("com.leslio.draftproject.ValuesProvider#providePhrasesForCountConsonants")
+    void countConsonants(int expected, String phrase) {
+        int actual = PhraseUtils.countConsonants(phrase);
+
+        assertEquals(expected, actual, "This method should count consonants.");
+    }
+
+    @Test
+    void countConsonantsNull() {
+        int expected = 0;
+        int actual = PhraseUtils.countConsonants(null);
+
+        assertEquals(expected, actual, "This method should count consonants.");
+    }
+}
+
+package com.leslio.draftproject;
+
+import org.junit.jupiter.params.provider.Arguments;
+
+import java.util.stream.Stream;
+
+public class ValuesProvider {
+    public static Stream<Arguments> providePhrasesForCountWords() {
+        return Stream.of(
+                Arguments.of(1, "word"),
+                Arguments.of(2, "word1 word2"),
+                Arguments.of(5, "word1 word2 word3 word4 word5"),
+                Arguments.of(2, "   \t \n \t\t       word1   \t \n \t\t   word2   \t \n \t\t  "),
+                Arguments.of(0, ""),
+                Arguments.of(0, "   \t \n \t\t      ")
+        );
+    }
+
+    public static Stream<Arguments> providePhrasesForCountChars() {
+        return Stream.of(
+                Arguments.of(1, "w"),
+                Arguments.of(4, "word"),
+                Arguments.of(10, "Word1 word2"),
+                Arguments.of(4, "   \t \n \t\t       word   \t \n \t\t   "),
+                Arguments.of(0, ""),
+                Arguments.of(0, "   \t \n \t\t      ")
+        );
+    }
+
+    public static Stream<Arguments> providePhrasesForCountVowels() {
+        return Stream.of(
+                Arguments.of(1, "word"),
+                Arguments.of(2, "word1 word2"),
+                Arguments.of(5, "word1 word2 word3 word4 word5"),
+                Arguments.of(2, "   \t \n \t\t       word1   \t \n \t\t   word2   \t \n \t\t  "),
+                Arguments.of(0, ""),
+                Arguments.of(0, "   \t \n \t\t      "),
+                Arguments.of(5, "aeiou"),
+                Arguments.of(10, "AEIOU aeiou")
+                );
+    }
+
+    public static Stream<Arguments> providePhrasesForCountConsonants() {
+        return Stream.of(
+                Arguments.of(3, "word"),
+                Arguments.of(6, "word1 word2"),
+                Arguments.of(15, "word1 word2 WORD3 word4 word5"),
+                Arguments.of(6, "   \t \n \t\t       word1   \t \n \t\t   word2   \t \n \t\t  "),
+                Arguments.of(0, ""),
+                Arguments.of(0, "   \t \n \t\t      ")
+                );
+    }
+}
+
+package com.leslio.draftproject;
+
+public class PhraseUtils {
+
+    public static int countWords(String phrase) {
+        if (phrase == null || phrase.isBlank())
+            return 0;
+        return phrase.strip().split("\\s+").length;
+    }
+
+    public static int countChars(String phrase) {
+        if (phrase == null || phrase.isBlank())
+            return 0;
+        return phrase.replaceAll("\\s+", "").length();
+    }
+
+    public static int countVowels(String phrase) {
+        if (phrase == null)
+            return 0;
+        int counter = 0;
+        for (char c : phrase.toLowerCase().toCharArray())
+            if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u')
+                counter++;
+        return counter;
+    }
+
+    public static int countConsonants(String phrase) {
+        if (phrase == null)
+            return 0;
+        int counter = 0;
+        for (char c : phrase.toLowerCase().toCharArray())
+            if ((c >= 'a' && c <= 'z') && !(c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u'))
+                counter++;
+        return counter;
+    }
+}
+
